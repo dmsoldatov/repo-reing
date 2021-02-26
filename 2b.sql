@@ -42,27 +42,6 @@ select
 		else coalesce(po.objectborder_index_ccode, b.indexto_ccode)
 	end as next_border,
 	indexnext_border, 
-case 
-		when (first_value(msk_dts) 
-		over (partition by b.rpobarcode_ccode, objecttype_ncode order by msk_dts DESC, decode(rule_ncode, 3, 2, 1, 3, 2, 4, 4, 5, 1) DESC)) = msk_dts 
-		and (first_value(rule_ncode) 
-		over (partition by b.rpobarcode_ccode, objecttype_ncode order by local_dts DESC, decode(rule_ncode, 3, 2, 1, 3, 2, 4, 4, 5, 1) DESC)) = rule_ncode
-		and objecttype_ncode = 3
-		then 2 
-		when (first_value(msk_dts) 
-		over (partition by b.rpobarcode_ccode, objecttype_ncode order by msk_dts DESC, decode(rule_ncode, 3, 2, 1, 3, 2, 4, 4, 5, 1) DESC)) = msk_dts 
-		and (first_value(rule_ncode) 
-		over (partition by b.rpobarcode_ccode, objecttype_ncode order by local_dts DESC, decode(rule_ncode, 3, 2, 1, 3, 2, 4, 4, 5, 1) DESC)) = rule_ncode 
-		and objecttype_ncode = 2
-		then 3
-		when (first_value(msk_dts) 
-		over (partition by b.rpobarcode_ccode, objecttype_ncode order by msk_dts DESC, decode(rule_ncode, 3, 2, 1, 3, 2, 4, 4, 5, 1) DESC)) = msk_dts 
-		and (first_value(rule_ncode) 
-		over (partition by b.rpobarcode_ccode, objecttype_ncode order by local_dts DESC, decode(rule_ncode, 3, 2, 1, 3, 2, 4, 4, 5, 1) DESC)) = rule_ncode
-		and objecttype_ncode = 1
-		then 1		
-		else 0
-	end as lastGroupedOper_rank,
     case 
 		when (first_value(opertype_ncode) 
 		over (partition by b.rpobarcode_ccode order by msk_dts DESC)) in (18, 1027) -- расширить условие с проверкой на тип операнда
