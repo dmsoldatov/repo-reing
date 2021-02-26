@@ -37,13 +37,7 @@ select
 	first_value(country_ncode) over (partition by rpobarcode_ccode order by firstborderoper_flg DESC, msk_dts DESC, priority DESC) as f_country,
 	first_value(objectborder_index_ccode) over (partition by rpobarcode_ccode order by firstborderoper_flg DESC, msk_dts DESC, priority DESC) as f_objectborder_index_ccode,
 	first_value(local_timezone) over (partition by rpobarcode_ccode order by firstborderoper_flg DESC, msk_dts DESC, priority DESC) as f_local_timezone,
-	case
-    	when BOOL_OR (tmp_oper_flg = 1) over(PARTITION BY rpobarcode_ccode)
-    		and first_value(objectborder_index_ccode)
-    		over(PARTITION BY rpobarcode_ccode ORDER BY tmp_oper_flg DESC, msk_dts DESC) = 
-    		first_value(objectborder_index_ccode) over (partition by rpobarcode_ccode order by firstborderoper_flg DESC, msk_dts DESC, priority DESC)
-    	then 1 else 0
-    end as tmpstorage_flag,	
+	tmpstorage_flag,	
 	return_flag,
     forwarding_flag,
     shortage_flag,
@@ -65,12 +59,8 @@ select
 		over (partition by rpobarcode_ccode order by msk_dts, decode(rule_ncode, 3, 2, 1, 3, 2, 4, 4, 5, 1), decode(indexnext_ccode, '', 1, 0))), 'no_Value') != nvl(objectborder_index_ccode, 'no_Value') 
 		then 1 else 0
 	end as firstborderoper_flg,
-	case 
-		when (opertype_ncode in (7,15,23) and objecttype_ncode = 1) then 1
-		when (opertype_ncode = 4 and objecttype_ncode = 1 and operattr_ncode in (5,6)) then 1
-		when (opertype_ncode = 8 and objecttype_ncode = 1 and operattr_ncode = 19) then 1
-		else 0
-	end as tmp_oper_flg,
+	BOOL_OR (rule_ncode = 3)
+    	OVER(PARTITION BY b.rpobarcode_ccode) as tmpstorage_flag,
     BOOL_OR (opertype_ncode = 3)
     	OVER(PARTITION BY b.rpobarcode_ccode) as return_flag,
 	BOOL_OR (opertype_ncode = 4)
