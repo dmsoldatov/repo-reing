@@ -14,7 +14,6 @@ INSERT /*+direct*/ into ${dwh4dm_scm}.${trnst_60days_opers_step3}
     lastGroupedOper_rank,
     lostOperation_flg,
     lastEnterOper_flg,
-	tmp_oper_flg,
 	isValidExit_flg,
 	isExitNowhere_flg,
 	isValidAllOpers_flg,
@@ -42,7 +41,6 @@ SELECT
     firstlvl.lastGroupedOper_rank,
     firstlvl.lostOperation_flg,
     firstlvl.lastEnterOper_flg,
-	firstlvl.tmp_oper_flg,
 	firstlvl.isValidExit_flg,
 	firstlvl.isExitNowhere_flg,
 	firstlvl.isValidAllOpers_flg,
@@ -92,7 +90,6 @@ select
 	lastGroupedOper_rank,
 	lostOperation_flg,
 	lastEnterOper_flg,
-    tmp_oper_flg,
     case 
 		when next_index is not null and next_index <> '0' and substring(next_index,1,3) <> '901' and next_border <> f_objectborder_index_ccode 
 		and msk_dts >= f_msk_dts and rule_ncode = 4
